@@ -291,13 +291,15 @@ func (a *ChainAPI) ChainSetHead(ctx context.Context, tsk types.TipSetKey) error 
 		for _, blk := range currentTs.Key().Cids() {
 			err = a.Chain.UnmarkBlockAsValidated(ctx, blk)
 			if err != nil {
-				return xerrors.Errorf("unmarking block as validated %s: %w", blk, err)
+				log.Errorf("unmarking block as validated %s: %w", blk, err)
+				break
 			}
 		}
 
 		currentTs, err = a.ChainGetTipSet(ctx, currentTs.Parents())
 		if err != nil {
-			return xerrors.Errorf("loading tipset: %w", err)
+			log.Errorf("loading tipset: %w", err)
+			break
 		}
 	}
 
